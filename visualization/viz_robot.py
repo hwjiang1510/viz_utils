@@ -10,10 +10,17 @@ def parse_args():
     parser.add_argument('-r', '--robot', action='store', type=str, required=True, help="Name of the robot")
     parser.add_argument('-j', '--joint-pos', nargs='+', type=float,
                         help="Single frame joint pos. For joint trajectory visualization, please use numpy file")
+    parser.add_argument('-f', '--joint-file', action='store', type=str, required=False,
+                        help="Filename to save the robot joint trajectory")
+    parser.add_argument('--fps', action='store', type=int, default=10, help="FPS to visualize the trajectory")
+    parser.add_argument('-s', '--smooth', action="store_true", default=False,
+                        help="Whether to use drive to generate trajectory (simulate but not animate)")
+    parser.add_argument('--dict-key', action='store', type=str,
+                        help="Key name for joint pos if the given file is a dict")
     return parser.parse_args()
 
 
-def visualize_articulation(robot_name, qpos_array=np.zeros([0, 0]), fps=10):
+def visualize_articulation(robot_name, qpos_array=np.zeros([0, 0]), fps=10, smooth=False):
     # Setup
     engine = sapien.Engine()
     renderer = sapien.VulkanRenderer(offscreen_only=False)
@@ -40,6 +47,7 @@ def visualize_articulation(robot_name, qpos_array=np.zeros([0, 0]), fps=10):
     viewer.set_scene(scene)
     viewer.set_camera_xyz(1, 0, 1)
     viewer.set_camera_rpy(0, -0.6, 3.14)
+    viewer.toggle_axes(0)
 
     # Articulation
     robot = load_robot(renderer, scene, robot_name)
@@ -55,8 +63,10 @@ def visualize_articulation(robot_name, qpos_array=np.zeros([0, 0]), fps=10):
 
     for i in range(trajectory_length):
         for _ in range(int(fps)):
-            robot.set_qpos(qpos_array[i])
-            robot.set_drive_target(qpos_array[i])
+            if smooth:
+                robot.set_drive_target(qpos_array[i])
+            else:
+                robot.set_qpos(qpos_array[i])
             scene.step()
             scene.update_render()
             viewer.render()
@@ -81,7 +91,31 @@ def main():
     else:
         qpos_array = np.zeros([0, 0])
 
-    visualize_articulation(args.robot, qpos_array)
+    if args.joint_pos is not None and args.joint_file is not None:
+        raise RuntimeError(f"Joint position and joint filename are both given, conflict!")
+
+    if args.joint_file is not None:
+        joint_pos = np.load(args.joint_file, allow_pickle=True)
+        if isinstance(joint_pos, dict):
+            if args.dict_key is None:
+                raise RuntimeError(f"File {args.joint_file} is a dict but dict key is not given."
+                                   f" Do not know which dict key to use.")
+            joint_pos = np.array(joint_pos[args.dict_key])
+        elif isinstance(joint_pos, np.ndarray):
+            pass
+        elif isinstance(joint_pos, list):
+            joint_pos = np.array(joint_pos)
+        else:
+            raise TypeError(f"Unsupported data type {type(joint_pos)}")
+
+        if len(joint_pos.shape) == 1:
+            qpos_array = joint_pos[None, :]
+        elif len(joint_pos.shape) > 2:
+            raise ValueError(f"Joint pos in file {args.joint_pos} has not supported shape {joint_pos.shape}")
+        else:
+            qpos_array = joint_pos[:, :24]
+
+    visualize_articulation(args.robot, qpos_array, args.fps, args.smooth)
 
 
 if __name__ == '__main__':
