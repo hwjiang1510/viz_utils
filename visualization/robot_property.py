@@ -3,10 +3,10 @@ import os
 import numpy as np
 
 _NAME_MAPPING = {
-    "allegro": "../assets/allegro_hand_description_right.urdf",
-    "allegro_left": "../assets/allegro_hand_description_left.urdf",
-    "allegro_right": "../assets/allegro_hand_description_right.urdf",
-    "adroit": "../assets/adroit_hand.urdf",
+    "allegro": "assets/allegro_hand_description_right.urdf",
+    "allegro_left": "assets/allegro_hand_description_left.urdf",
+    "allegro_right": "assets/allegro_hand_description_right.urdf",
+    "adroit": "assets/adroit_hand.urdf",
 }
 SUPPORTED_ROBOT = list(_NAME_MAPPING.keys())
 

@@ -1,8 +1,10 @@
+import argparse
+
 import numpy as np
 import sapien.core as sapien
 from sapien.utils import Viewer
-import argparse
-from visualization.robot_property import SUPPORTED_ROBOT, load_robot
+
+from .robot_property import SUPPORTED_ROBOT, load_robot
 
 
 def parse_args():
@@ -116,7 +118,3 @@ def main():
             qpos_array = joint_pos[:, :24]
 
     visualize_articulation(args.robot, qpos_array, args.fps, args.smooth)
-
-
-if __name__ == '__main__':
-    main()
