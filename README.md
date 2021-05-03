@@ -2,7 +2,7 @@
 
 ## Installation
 
-Visit [Wheel Home](http://volcan.ucsd.edu:8088/#/wheel) and choose one wheel to install according to your python
+Visit [Wheel Home](http://volcan.ucsd.edu:8088) and choose one wheel to install according to your python
 version, for example (**python 3.8**):
 
 ```bash
