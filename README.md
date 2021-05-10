@@ -37,4 +37,5 @@ For example, use the test data in this repo:
 
 ```bash
 viz_robot -f test_assets/obj_id_37.pkl -r adroit_free --dict-key retarget_qpos -s
+viz_hand_object -f test_assets/142517.pkl -r adroit_free
 ```
