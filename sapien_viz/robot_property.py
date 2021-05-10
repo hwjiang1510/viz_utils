@@ -7,6 +7,7 @@ _NAME_MAPPING = {
     "allegro_left": "assets/allegro_hand_description_left.urdf",
     "allegro_right": "assets/allegro_hand_description_right.urdf",
     "adroit": "assets/adroit_hand.urdf",
+    "adroit_free": "assets/adroit_hand_free.urdf",
 }
 SUPPORTED_ROBOT = list(_NAME_MAPPING.keys())
 
@@ -17,13 +18,13 @@ def load_robot(renderer: sapien.VulkanRenderer, scene: sapien.Scene, robot_name)
     filename = os.path.join(current_file, _NAME_MAPPING[robot_name])
     robot_builder = loader.load_file_as_articulation_builder(filename)
     for link_builder in robot_builder.get_link_builders():
-        link_builder.set_collision_group(0, 1, 2, 2)
+        link_builder.set_collision_groups(0, 1, 2, 2)
     robot = robot_builder.build(fix_root_link=True)
     scene.step()
     scene.update_render()
 
     # Robot specific property
-    if robot_name == "adroit":
+    if 'adroit' in robot_name:
         for link in robot.get_links():
             for geom in link.get_visual_bodies():
                 for shape in geom.get_render_shapes():
@@ -34,6 +35,6 @@ def load_robot(renderer: sapien.VulkanRenderer, scene: sapien.Scene, robot_name)
                     mat_viz.set_roughness(0.1)
 
     for joint in robot.get_active_joints():
-        joint.set_drive_property(100, 20)
+        joint.set_drive_property(1000, 200)
 
     return robot

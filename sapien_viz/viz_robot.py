@@ -4,7 +4,7 @@ import numpy as np
 import sapien.core as sapien
 from sapien.utils import Viewer
 
-from .robot_property import SUPPORTED_ROBOT, load_robot
+from sapien_viz.robot_property import SUPPORTED_ROBOT, load_robot
 
 
 def parse_args():
@@ -67,16 +67,15 @@ def visualize_articulation(robot_name, qpos_array=np.zeros([0, 0]), fps=10, smoo
         for _ in range(int(fps)):
             if smooth:
                 robot.set_drive_target(qpos_array[i])
+                robot.set_qpos(qpos_array[i])
             else:
                 robot.set_qpos(qpos_array[i])
-            scene.step()
             scene.update_render()
             viewer.render()
     if trajectory_length > 0:
         print(f"Finish visualize robot trajectory with {trajectory_length} trajectory points.")
 
     while not viewer.closed:
-        scene.step()
         scene.update_render()
         viewer.render()
 
@@ -115,6 +114,10 @@ def main():
         elif len(joint_pos.shape) > 2:
             raise ValueError(f"Joint pos in file {args.joint_pos} has not supported shape {joint_pos.shape}")
         else:
-            qpos_array = joint_pos[:, :24]
+            qpos_array = joint_pos[:, :]
 
     visualize_articulation(args.robot, qpos_array, args.fps, args.smooth)
+
+
+if __name__ == '__main__':
+    main()
