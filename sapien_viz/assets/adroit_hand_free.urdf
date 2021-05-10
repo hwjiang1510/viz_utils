@@ -36,12 +36,6 @@
       <inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/>
     </inertial>
   </link>
-<!--  <link name="root6">-->
-<!--    <inertial>-->
-<!--      <mass value="0.01"/>-->
-<!--      <inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/>-->
-<!--    </inertial>-->
-<!--  </link>-->
 
   <joint name="world_joint" type="fixed">
     <parent link="world"/>

@@ -64,12 +64,12 @@ def visualize_articulation(robot_name, qpos_array=np.zeros([0, 0]), fps=10, smoo
     scene.update_render()
 
     for i in range(trajectory_length):
+        if smooth:
+            robot.set_drive_target(qpos_array[i])
+            robot.set_qpos(qpos_array[i])
+        else:
+            robot.set_qpos(qpos_array[i])
         for _ in range(int(fps)):
-            if smooth:
-                robot.set_drive_target(qpos_array[i])
-                robot.set_qpos(qpos_array[i])
-            else:
-                robot.set_qpos(qpos_array[i])
             scene.update_render()
             viewer.render()
     if trajectory_length > 0:
