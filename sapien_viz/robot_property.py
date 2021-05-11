@@ -20,6 +20,7 @@ def load_robot(renderer: sapien.VulkanRenderer, scene: sapien.Scene, robot_name)
     for link_builder in robot_builder.get_link_builders():
         link_builder.set_collision_groups(0, 1, 2, 2)
     robot = robot_builder.build(fix_root_link=True)
+    robot.set_qpos(np.zeros([robot.dof]))
     scene.step()
     scene.update_render()
 
